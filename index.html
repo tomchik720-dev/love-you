@@ -74,13 +74,16 @@ let startTime = performance.now();
 
 
 // ============================================================
-// CANVAS
+// РАЗМЕРЫ
 // ============================================================
 
 function resize() {
 
     const dpr =
-        Math.min(window.devicePixelRatio || 1, 2);
+        Math.min(
+            window.devicePixelRatio || 1,
+            2
+        );
 
     W = window.innerWidth;
     H = window.innerHeight;
@@ -102,33 +105,30 @@ function resize() {
 
     CX = W / 2;
 
-    // Немного поднимаем сердце,
-    // чтобы снизу оставалось место
-    CY = H / 2 + H * 0.015;
+    // Немного выше центра
+    CY = H * 0.51;
 
     /*
-        Сердце специально сделано широким.
-
-        На телефоне:
-        ~92% ширины экрана
-        ~72% высоты
+        Ширина сердца.
+        0.94 = почти вся ширина телефона.
     */
 
     SCALE = Math.min(
-        W * 0.92 / 32,
-        H * 0.72 / 26
+        W * 0.94 / 32,
+        H * 0.78 / 26
     );
 }
 
 
 // ============================================================
-// HEART
+// СЕРДЦЕ
 // ============================================================
 
 function heartPoint(t) {
 
     const x =
-        16 * Math.pow(
+        16 *
+        Math.pow(
             Math.sin(t),
             3
         );
@@ -139,15 +139,36 @@ function heartPoint(t) {
         - 2 * Math.cos(3 * t)
         - Math.cos(4 * t);
 
+
+    /*
+        Растяжение:
+
+        HEART_WIDTH
+        отвечает за ширину.
+
+        HEART_HEIGHT
+        отвечает за высоту.
+
+        1.18 = немного вытянуто вниз.
+    */
+
+    const HEART_WIDTH = 1.0;
+    const HEART_HEIGHT = 1.18;
+
+
     return {
 
         x:
             CX +
-            x * SCALE,
+            x *
+            SCALE *
+            HEART_WIDTH,
 
         y:
             CY -
-            y * SCALE
+            y *
+            SCALE *
+            HEART_HEIGHT
     };
 }
 
@@ -165,7 +186,7 @@ function random(min, max) {
 
 
 // ============================================================
-// EASING
+// ПЛАВНОЕ ДВИЖЕНИЕ
 // ============================================================
 
 function ease(t) {
@@ -175,30 +196,35 @@ function ease(t) {
 
 
 // ============================================================
-// CREATE PARTICLES
+// ЧАСТИЦЫ
 // ============================================================
 
 function createParticles() {
 
     particles = [];
 
-    for (let i = 0; i < COUNT; i++) {
-
-        /*
-            Распределяем точки по сердцу.
-            Небольшой случайный разброс делает
-            сердце живым.
-        */
+    for (
+        let i = 0;
+        i < COUNT;
+        i++
+    ) {
 
         const t =
             (i / COUNT) *
-            Math.PI * 2;
+            Math.PI *
+            2;
 
         const target =
             heartPoint(t);
 
-        target.x += random(-3, 3);
-        target.y += random(-3, 3);
+
+        // Небольшой разброс
+
+        target.x +=
+            random(-3, 3);
+
+        target.y +=
+            random(-3, 3);
 
 
         // ----------------------------------------------------
@@ -213,49 +239,89 @@ function createParticles() {
                 Math.random() * 4
             );
 
+
         if (side === 0) {
 
-            // Сверху
+            // сверху
 
-            sx = random(-100, W + 100);
-            sy = random(-H, -30);
+            sx =
+                random(
+                    -100,
+                    W + 100
+                );
+
+            sy =
+                random(
+                    -H,
+                    -30
+                );
 
         }
 
         else if (side === 1) {
 
-            // Справа
+            // справа
 
-            sx = random(W + 30, W + 400);
-            sy = random(-50, H + 50);
+            sx =
+                random(
+                    W + 30,
+                    W + 400
+                );
+
+            sy =
+                random(
+                    -50,
+                    H + 50
+                );
 
         }
 
         else if (side === 2) {
 
-            // Снизу
+            // снизу
 
-            sx = random(-100, W + 100);
-            sy = random(H + 30, H + 400);
+            sx =
+                random(
+                    -100,
+                    W + 100
+                );
+
+            sy =
+                random(
+                    H + 30,
+                    H + 400
+                );
 
         }
 
         else {
 
-            // Слева
+            // слева
 
-            sx = random(-400, -30);
-            sy = random(-50, H + 50);
+            sx =
+                random(
+                    -400,
+                    -30
+                );
+
+            sy =
+                random(
+                    -50,
+                    H + 50
+                );
         }
 
 
         // ----------------------------------------------------
-        // Размер
+        // Размер LOVE YOU
         // ----------------------------------------------------
 
         const size =
             Math.floor(
-                random(11, 20)
+                random(
+                    11,
+                    20
+                )
             );
 
 
@@ -295,23 +361,21 @@ function createParticles() {
 
             color: color,
 
-            /*
-                Небольшая задержка между словами
-            */
-
             delay:
                 i * 0.012,
 
-            // случайная скорость
             speed:
-                random(0.85, 1.15)
+                random(
+                    0.85,
+                    1.15
+                )
         });
     }
 }
 
 
 // ============================================================
-// BACKGROUND STARS
+// ЗВЁЗДЫ
 // ============================================================
 
 function createStars() {
@@ -326,31 +390,57 @@ function createStars() {
             )
         );
 
-    for (let i = 0; i < amount; i++) {
+
+    for (
+        let i = 0;
+        i < amount;
+        i++
+    ) {
 
         stars.push({
 
-            x: random(0, W),
+            x:
+                random(
+                    0,
+                    W
+                ),
 
-            y: random(0, H),
+            y:
+                random(
+                    0,
+                    H
+                ),
 
-            size: random(0.5, 1.5),
+            size:
+                random(
+                    0.5,
+                    1.5
+                ),
 
-            alpha: random(0.15, 0.5),
+            alpha:
+                random(
+                    0.15,
+                    0.5
+                ),
 
-            speed: random(0.5, 1.5)
+            speed:
+                random(
+                    0.5,
+                    1.5
+                )
         });
     }
 }
 
 
 // ============================================================
-// DRAW BACKGROUND
+// ФОН
 // ============================================================
 
 function drawBackground(time) {
 
-    ctx.fillStyle = "#020002";
+    ctx.fillStyle =
+        "#020002";
 
     ctx.fillRect(
         0,
@@ -360,17 +450,18 @@ function drawBackground(time) {
     );
 
 
-    // --------------------------------------------------------
-    // Звёзды
-    // --------------------------------------------------------
-
-    for (const star of stars) {
+    for (
+        const star of stars
+    ) {
 
         const alpha =
             star.alpha +
             Math.sin(
-                time * star.speed
-            ) * 0.12;
+                time *
+                star.speed
+            ) *
+            0.12;
+
 
         ctx.beginPath();
 
@@ -382,11 +473,17 @@ function drawBackground(time) {
             Math.PI * 2
         );
 
+
         ctx.fillStyle =
-            `rgba(255,105,180,${Math.max(
-                0.05,
-                alpha
-            )})`;
+            `rgba(
+                255,
+                105,
+                180,
+                ${Math.max(
+                    0.05,
+                    alpha
+                )}
+            )`;
 
         ctx.fill();
     }
@@ -394,7 +491,7 @@ function drawBackground(time) {
 
 
 // ============================================================
-// DRAW LOVE YOU
+// LOVE YOU
 // ============================================================
 
 function drawText(
@@ -410,8 +507,11 @@ function drawText(
     ctx.font =
         `bold ${size}px Arial, sans-serif`;
 
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.textAlign =
+        "center";
+
+    ctx.textBaseline =
+        "middle";
 
     ctx.fillStyle =
         color;
@@ -436,32 +536,37 @@ function drawText(
 
 
 // ============================================================
-// HEART GLOW
+// СВЕЧЕНИЕ СЕРДЦА
 // ============================================================
 
 function drawHeartGlow(time) {
 
     /*
-        После сборки сердце слегка пульсирует.
+        Небольшая пульсация.
     */
 
     const pulse =
         1 +
-        Math.sin(time * 2.5) *
+        Math.sin(
+            time * 2.5
+        ) *
         0.012;
 
 
     ctx.save();
+
 
     ctx.translate(
         CX,
         CY
     );
 
+
     ctx.scale(
         pulse,
         pulse
     );
+
 
     ctx.translate(
         -CX,
@@ -470,32 +575,37 @@ function drawHeartGlow(time) {
 
 
     // --------------------------------------------------------
-    // Glow
+    // Свечение
     // --------------------------------------------------------
 
-    ctx.globalAlpha = 0.055;
+    ctx.globalAlpha =
+        0.07;
 
     ctx.shadowColor =
         "#ff1493";
 
     ctx.shadowBlur =
-        35;
+        40;
 
 
     ctx.beginPath();
 
+
     for (
         let i = 0;
-        i <= 100;
+        i <= 140;
         i++
     ) {
 
         const t =
-            (i / 100) *
-            Math.PI * 2;
+            (i / 140) *
+            Math.PI *
+            2;
+
 
         const point =
             heartPoint(t);
+
 
         if (i === 0) {
 
@@ -504,7 +614,9 @@ function drawHeartGlow(time) {
                 point.y
             );
 
-        } else {
+        }
+
+        else {
 
             ctx.lineTo(
                 point.x,
@@ -513,44 +625,55 @@ function drawHeartGlow(time) {
         }
     }
 
+
     ctx.closePath();
+
 
     ctx.strokeStyle =
         "#ff1493";
 
     ctx.lineWidth =
-        8;
+        9;
 
     ctx.stroke();
+
 
     ctx.restore();
 }
 
 
 // ============================================================
-// ANIMATION
+// АНИМАЦИЯ
 // ============================================================
 
 function animate(now) {
 
     const time =
-        (now - startTime) / 1000;
+        (now - startTime) /
+        1000;
 
 
     // --------------------------------------------------------
-    // BACKGROUND
+    // Фон
     // --------------------------------------------------------
 
-    drawBackground(time);
+    drawBackground(
+        time
+    );
 
 
     // --------------------------------------------------------
-    // PARTICLES
+    // LOVE YOU
     // --------------------------------------------------------
 
-    for (const p of particles) {
+    for (
+        const p of particles
+    ) {
 
-        if (time < p.delay) {
+        if (
+            time <
+            p.delay
+        ) {
             continue;
         }
 
@@ -571,39 +694,14 @@ function animate(now) {
 
 
         const smooth =
-            ease(progress);
+            ease(
+                progress
+            );
 
 
         // ----------------------------------------------------
-        // Движение
+        // Движение к сердцу
         // ----------------------------------------------------
 
         let x =
-            p.sx +
-            (p.tx - p.sx) *
-            smooth;
-
-        let y =
-            p.sy +
-            (p.ty - p.sy) *
-            smooth;
-
-
-        // ----------------------------------------------------
-        // Волна
-        // ----------------------------------------------------
-
-        if (progress < 1) {
-
-            const wave =
-                Math.sin(
-                    time * 5 +
-                    p.delay * 10
-                ) *
-                5 *
-                (1 - smooth);
-
-            x += wave;
-        }
-
 ```
