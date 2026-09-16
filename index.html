@@ -1,48 +1,48 @@
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>LOVE YOU</title>
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
+
+<title>LOVE YOU ❤️</title>
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    html, body {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        background: #020002;
-    }
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #020002;
+}
 
-    body {
-        position: relative;
-    }
+body {
+    position: fixed;
+    inset: 0;
+    touch-action: manipulation;
+}
 
-    canvas {
-        display: block;
-        width: 100vw;
-        height: 100vh;
-        background: #020002;
-    }
+canvas {
+    position: absolute;
+    inset: 0;
 
-    /* Подсказка */
-    #hint {
-        position: fixed;
-        bottom: 18px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: rgba(255, 117, 184, 0.35);
-        font-family: Arial, sans-serif;
-        font-size: 11px;
-        pointer-events: none;
-        user-select: none;
-    }
+    width: 100vw;
+    height: 100vh;
+
+    display: block;
+    background: #020002;
+}
 </style>
 </head>
 
@@ -50,36 +50,37 @@
 
 <canvas id="canvas"></canvas>
 
-<div id="hint">Нажмите на экран</div>
-
 <script>
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-let W;
-let H;
-let CX;
-let CY;
-let SCALE;
+let W = 0;
+let H = 0;
+let CX = 0;
+let CY = 0;
+let SCALE = 0;
 
-const COUNT = 300;
+const COUNT = 360;
 
 const PINK = "#ff1493";
 const PINK_LIGHT = "#ff4fa3";
 const PINK_SOFT = "#ff75b8";
 
 let particles = [];
+let stars = [];
+
 let startTime = performance.now();
 
 
 // ============================================================
-// РАЗМЕР CANVAS
+// CANVAS
 // ============================================================
 
 function resize() {
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr =
+        Math.min(window.devicePixelRatio || 1, 2);
 
     W = window.innerWidth;
     H = window.innerHeight;
@@ -90,31 +91,47 @@ function resize() {
     canvas.style.width = W + "px";
     canvas.style.height = H + "px";
 
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.setTransform(
+        dpr,
+        0,
+        0,
+        dpr,
+        0,
+        0
+    );
 
     CX = W / 2;
-    CY = H / 2;
 
-    // Аналог SCALE = min(W,H)/32
-    SCALE = Math.min(W, H) / 32;
+    // Немного поднимаем сердце,
+    // чтобы снизу оставалось место
+    CY = H / 2 + H * 0.015;
+
+    /*
+        Сердце специально сделано широким.
+
+        На телефоне:
+        ~92% ширины экрана
+        ~72% высоты
+    */
+
+    SCALE = Math.min(
+        W * 0.92 / 32,
+        H * 0.72 / 26
+    );
 }
-
-resize();
-
-window.addEventListener("resize", () => {
-    resize();
-    createParticles();
-});
 
 
 // ============================================================
-// ФОРМА СЕРДЦА
+// HEART
 // ============================================================
 
 function heartPoint(t) {
 
     const x =
-        16 * Math.pow(Math.sin(t), 3);
+        16 * Math.pow(
+            Math.sin(t),
+            3
+        );
 
     const y =
         13 * Math.cos(t)
@@ -123,101 +140,15 @@ function heartPoint(t) {
         - Math.cos(4 * t);
 
     return {
-        x: CX + x * SCALE,
-        y: CY - y * SCALE
+
+        x:
+            CX +
+            x * SCALE,
+
+        y:
+            CY -
+            y * SCALE
     };
-}
-
-
-// ============================================================
-// ПЛАВНОСТЬ
-// ============================================================
-
-function ease(t) {
-
-    return t * t * (3 - 2 * t);
-}
-
-
-// ============================================================
-// СОЗДАЁМ ЧАСТИЦЫ
-// ============================================================
-
-function createParticles() {
-
-    particles = [];
-
-    for (let i = 0; i < COUNT; i++) {
-
-        const t =
-            (i / COUNT) * Math.PI * 2;
-
-        const target =
-            heartPoint(t);
-
-        // Небольшой разброс
-        target.x += random(-5, 5);
-        target.y += random(-5, 5);
-
-        let sx;
-        let sy;
-
-        const side =
-            Math.floor(Math.random() * 4);
-
-        if (side === 0) {
-
-            sx = random(0, W);
-            sy = random(-H, 0);
-
-        } else if (side === 1) {
-
-            sx = random(W, W + 300);
-            sy = random(0, H);
-
-        } else if (side === 2) {
-
-            sx = random(0, W);
-            sy = random(H, H + 300);
-
-        } else {
-
-            sx = random(-300, 0);
-            sy = random(0, H);
-        }
-
-        const size =
-            Math.floor(random(10, 18));
-
-        const colors = [
-            PINK,
-            PINK,
-            PINK_LIGHT,
-            PINK_SOFT
-        ];
-
-        particles.push({
-
-            sx,
-            sy,
-
-            tx: target.x,
-            ty: target.y,
-
-            size,
-
-            color:
-                colors[
-                    Math.floor(
-                        Math.random() *
-                        colors.length
-                    )
-                ],
-
-            delay:
-                i * 0.018
-        });
-    }
 }
 
 
@@ -234,52 +165,400 @@ function random(min, max) {
 
 
 // ============================================================
-// РИСУЕМ LOVE YOU
+// EASING
 // ============================================================
 
-function drawText(text, x, y, size, color) {
+function ease(t) {
 
-    ctx.font =
-        `bold ${size}px Arial`;
-
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-
-    ctx.fillStyle = color;
-
-    ctx.fillText(
-        text,
-        x,
-        y
-    );
+    return t * t * (3 - 2 * t);
 }
 
 
 // ============================================================
-// АНИМАЦИЯ
+// CREATE PARTICLES
 // ============================================================
 
-function animate(now) {
+function createParticles() {
 
-    const currentTime =
-        (now - startTime) / 1000;
+    particles = [];
 
-    ctx.clearRect(
+    for (let i = 0; i < COUNT; i++) {
+
+        /*
+            Распределяем точки по сердцу.
+            Небольшой случайный разброс делает
+            сердце живым.
+        */
+
+        const t =
+            (i / COUNT) *
+            Math.PI * 2;
+
+        const target =
+            heartPoint(t);
+
+        target.x += random(-3, 3);
+        target.y += random(-3, 3);
+
+
+        // ----------------------------------------------------
+        // Начальная позиция
+        // ----------------------------------------------------
+
+        let sx;
+        let sy;
+
+        const side =
+            Math.floor(
+                Math.random() * 4
+            );
+
+        if (side === 0) {
+
+            // Сверху
+
+            sx = random(-100, W + 100);
+            sy = random(-H, -30);
+
+        }
+
+        else if (side === 1) {
+
+            // Справа
+
+            sx = random(W + 30, W + 400);
+            sy = random(-50, H + 50);
+
+        }
+
+        else if (side === 2) {
+
+            // Снизу
+
+            sx = random(-100, W + 100);
+            sy = random(H + 30, H + 400);
+
+        }
+
+        else {
+
+            // Слева
+
+            sx = random(-400, -30);
+            sy = random(-50, H + 50);
+        }
+
+
+        // ----------------------------------------------------
+        // Размер
+        // ----------------------------------------------------
+
+        const size =
+            Math.floor(
+                random(11, 20)
+            );
+
+
+        // ----------------------------------------------------
+        // Цвет
+        // ----------------------------------------------------
+
+        const colors = [
+
+            PINK,
+            PINK,
+            PINK,
+            PINK_LIGHT,
+            PINK_SOFT
+
+        ];
+
+
+        const color =
+            colors[
+                Math.floor(
+                    Math.random() *
+                    colors.length
+                )
+            ];
+
+
+        particles.push({
+
+            sx: sx,
+            sy: sy,
+
+            tx: target.x,
+            ty: target.y,
+
+            size: size,
+
+            color: color,
+
+            /*
+                Небольшая задержка между словами
+            */
+
+            delay:
+                i * 0.012,
+
+            // случайная скорость
+            speed:
+                random(0.85, 1.15)
+        });
+    }
+}
+
+
+// ============================================================
+// BACKGROUND STARS
+// ============================================================
+
+function createStars() {
+
+    stars = [];
+
+    const amount =
+        Math.min(
+            90,
+            Math.floor(
+                W * H / 10000
+            )
+        );
+
+    for (let i = 0; i < amount; i++) {
+
+        stars.push({
+
+            x: random(0, W),
+
+            y: random(0, H),
+
+            size: random(0.5, 1.5),
+
+            alpha: random(0.15, 0.5),
+
+            speed: random(0.5, 1.5)
+        });
+    }
+}
+
+
+// ============================================================
+// DRAW BACKGROUND
+// ============================================================
+
+function drawBackground(time) {
+
+    ctx.fillStyle = "#020002";
+
+    ctx.fillRect(
         0,
         0,
         W,
         H
     );
 
+
+    // --------------------------------------------------------
+    // Звёзды
+    // --------------------------------------------------------
+
+    for (const star of stars) {
+
+        const alpha =
+            star.alpha +
+            Math.sin(
+                time * star.speed
+            ) * 0.12;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            star.x,
+            star.y,
+            star.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            `rgba(255,105,180,${Math.max(
+                0.05,
+                alpha
+            )})`;
+
+        ctx.fill();
+    }
+}
+
+
+// ============================================================
+// DRAW LOVE YOU
+// ============================================================
+
+function drawText(
+    x,
+    y,
+    size,
+    color,
+    alpha = 1
+) {
+
+    ctx.save();
+
+    ctx.font =
+        `bold ${size}px Arial, sans-serif`;
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillStyle =
+        color;
+
+    ctx.globalAlpha =
+        alpha;
+
+    ctx.shadowColor =
+        color;
+
+    ctx.shadowBlur =
+        5;
+
+    ctx.fillText(
+        "LOVE YOU",
+        x,
+        y
+    );
+
+    ctx.restore();
+}
+
+
+// ============================================================
+// HEART GLOW
+// ============================================================
+
+function drawHeartGlow(time) {
+
+    /*
+        После сборки сердце слегка пульсирует.
+    */
+
+    const pulse =
+        1 +
+        Math.sin(time * 2.5) *
+        0.012;
+
+
+    ctx.save();
+
+    ctx.translate(
+        CX,
+        CY
+    );
+
+    ctx.scale(
+        pulse,
+        pulse
+    );
+
+    ctx.translate(
+        -CX,
+        -CY
+    );
+
+
+    // --------------------------------------------------------
+    // Glow
+    // --------------------------------------------------------
+
+    ctx.globalAlpha = 0.055;
+
+    ctx.shadowColor =
+        "#ff1493";
+
+    ctx.shadowBlur =
+        35;
+
+
+    ctx.beginPath();
+
+    for (
+        let i = 0;
+        i <= 100;
+        i++
+    ) {
+
+        const t =
+            (i / 100) *
+            Math.PI * 2;
+
+        const point =
+            heartPoint(t);
+
+        if (i === 0) {
+
+            ctx.moveTo(
+                point.x,
+                point.y
+            );
+
+        } else {
+
+            ctx.lineTo(
+                point.x,
+                point.y
+            );
+        }
+    }
+
+    ctx.closePath();
+
+    ctx.strokeStyle =
+        "#ff1493";
+
+    ctx.lineWidth =
+        8;
+
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+
+// ============================================================
+// ANIMATION
+// ============================================================
+
+function animate(now) {
+
+    const time =
+        (now - startTime) / 1000;
+
+
+    // --------------------------------------------------------
+    // BACKGROUND
+    // --------------------------------------------------------
+
+    drawBackground(time);
+
+
+    // --------------------------------------------------------
+    // PARTICLES
+    // --------------------------------------------------------
+
     for (const p of particles) {
 
-        // Слово ещё не появилось
-        if (currentTime < p.delay) {
+        if (time < p.delay) {
             continue;
         }
 
+
         let progress =
-            (currentTime - p.delay) / 2.5;
+            (time - p.delay) /
+            (2.7 / p.speed);
+
 
         progress =
             Math.max(
@@ -290,10 +569,15 @@ function animate(now) {
                 )
             );
 
+
         const smooth =
             ease(progress);
 
-        // Полёт к сердцу
+
+        // ----------------------------------------------------
+        // Движение
+        // ----------------------------------------------------
+
         let x =
             p.sx +
             (p.tx - p.sx) *
@@ -304,72 +588,22 @@ function animate(now) {
             (p.ty - p.sy) *
             smooth;
 
-        // Лёгкое колебание
+
+        // ----------------------------------------------------
+        // Волна
+        // ----------------------------------------------------
+
         if (progress < 1) {
 
             const wave =
                 Math.sin(
-                    currentTime * 5 +
-                    p.delay * 8
+                    time * 5 +
+                    p.delay * 10
                 ) *
-                4 *
+                5 *
                 (1 - smooth);
 
             x += wave;
         }
 
-        drawText(
-            "LOVE YOU",
-            x,
-            y,
-            p.size,
-            p.color
-        );
-    }
-
-    requestAnimationFrame(animate);
-}
-
-
-// ============================================================
-// ЗАПУСК
-// ============================================================
-
-createParticles();
-
-requestAnimationFrame(animate);
-
-
-// ============================================================
-// НАЖАТИЕ НА ЭКРАН — ЗАПУСК ЗАНОВО
-// ============================================================
-
-document.addEventListener("click", () => {
-
-    startTime = performance.now();
-
-    createParticles();
-
-});
-
-
-// ============================================================
-// TOUCH
-// ============================================================
-
-document.addEventListener(
-    "touchstart",
-    () => {
-
-        startTime = performance.now();
-
-        createParticles();
-
-    },
-    { passive: true }
-);
-
-</script>
-
-</body>
-</html>
+```
